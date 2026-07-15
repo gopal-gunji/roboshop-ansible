@@ -6,6 +6,7 @@
     ami_id: ami-0220d79f3f480ecf5
     domain_name: durgagopalakrishna.online
     env: dev
+    action: create
     instance:
     - mongodb
     - catalogue
@@ -23,9 +24,13 @@
         Name: "{{ item }}-{{ env }}"
     loop: "{{ instance }}"
     register: ec2_output
+    when: action == "create"
+
+
   - name: print the output of ec2 instance
     ansible.builtin.debug:
       msg: "{{ ec2_output }}"
+      when: action == "create"
 
   - name: create r53 records
     amazon.aws.route53:
@@ -37,6 +42,7 @@
       value: "{{ item.instances[0].private_ip_address }}"
       wait: true
     loop: "{{ ec2_output.results }}"
+    when: action == "create"
 
 
   - name: create r53 records for frontend
@@ -49,5 +55,12 @@
       value: "{{ item.instances[0].public_ip_address }}"
       wait: true
     loop: "{{ ec2_output.results }}"
-    when: item.item == "frontend"
+    when: 
+    - item.item == "frontend"
+    - action == "create"
 
+  - name: delete EC2 instance
+    amazon.aws.ec2_instance:
+      state: absent
+      name: "{{ item }}-{{ env }}"
+    loop: "{{ instances }}"

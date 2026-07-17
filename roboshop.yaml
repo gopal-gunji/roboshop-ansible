@@ -1,3 +1,6 @@
+
+# ansible-playbook -i localhost, -e instances=['mongodb', 'catalogue', 'redis', 'user','cart', 'mysql', 'shipping', 'rabbitmq', 'payment', 'frontend'] roboshop.yaml
+
 - name: create ec2 instance and r53 records
   hosts: all
   connection: local
@@ -7,7 +10,7 @@
     domain_name: durgagopalakrishna.online
     env: dev
     action: create
-    instance:
+    instances:
     - mongodb
     - catalogue
   tasks:
@@ -22,7 +25,7 @@
         Component: "{{ item }}"
         Environment: "{{ env }}"
         Name: "{{ item }}-{{ env }}"
-    loop: "{{ instance }}"
+    loop: "{{ instances }}"
     register: ec2_output
     when: action == "create"
 
@@ -59,8 +62,23 @@
     - item.item == "frontend"
     - action == "create"
 
+
+
+  
+  - name: delete r53 records 
+    amazon.aws.route53:
+      state: absent
+      zone: "{{domain_name}}"
+      record: "{{ item }}-{{ env }}.{{ domain_name }}" # roboshop-dev.durgagopalakrishna.online
+      type: A
+      ttl: 1
+    loop: "{{ instances }}"
+    when: action == "destroy"
+
   - name: delete EC2 instance
     amazon.aws.ec2_instance:
       state: absent
       name: "{{ item }}-{{ env }}"
+      wait: false
     loop: "{{ instances }}"
+    when: action == "destroy"

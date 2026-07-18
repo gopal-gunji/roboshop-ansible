@@ -51,12 +51,12 @@
       chdir: /app
 
   - name: rename shipping file 
-    ansible.builtin,command: mv target/shipping-1.0.jar shipping.jar
+    ansible.builtin.command: mv target/shipping-1.0.jar shipping.jar
     args:
       chdir: /app
 
   - name: create systemctl service
-    ansible.builtin.templete:
+    ansible.builtin.template:
       src: shipping.service
       dest: /etc/systemd/system/shipping.service
 

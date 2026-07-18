@@ -19,7 +19,7 @@
       name: rabbitmq
 
   - name: create rabbitmq user
-    comminity.rabbitmq.rabbitmq_user:
+    community.rabbitmq.rabbitmq_user:
     user: roboshop
     password: roboshop123
     permissions: 

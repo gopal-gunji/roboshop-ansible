@@ -67,8 +67,8 @@
 
   - name: Install PyMySQL
     ansible.builtin.dnf:
-    name: python3-PyMySQL
-    state: present
+      name: python3-PyMySQL
+      state: present
 
   - name: import shipping data
     community.mysql.mysql_db:

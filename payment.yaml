@@ -58,8 +58,8 @@
   #     dest: /etc/systemd/system/payment.service
    
   - name: copy payment service
-    template:
-      src: payment.service.j2
+    ansible.builtin.template:
+      src: payment.service
       dest: /etc/systemd/system/payment.service
 
   - name: daemon reload

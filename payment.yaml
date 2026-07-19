@@ -58,9 +58,9 @@
         src: payment.service
         dest: /etc/systemd/system/payment.service
 
-    - name: daemon reload
-      ansible.builtin.system_service:
-        daemon_reload: true
+    - name: daemo reload
+      ansible.builtin.systemd_service:
+      daemon_reload: true
 
     - name: start enable payment
       ansible.builtin.service:
